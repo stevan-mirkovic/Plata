@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Edit Position";
+}
+
+@model PositionEditViewModel
+@inject IViewLocalizer Localizer
+
+@section Header {
+    <partial name="_Header"></partial>
+}
+
+<div class="title-container">
+    <h1>@Localizer["MainTitle"]</h1>
+    <partial name="_AppStatusMsg"></partial>
+    <a class="back-arrow-link" asp-action="Positions" asp-controller="Company">🢀</a>
+</div>
+
+<section>
+    <h2>@Localizer["UpdateSectionTitle"]</h2>
+    <form asp-action="Edit" asp-controller="Position">
+        <fieldset>
+            <div class="labeled-input-container m-0">
+                <label for="name">@Localizer["NameLabel"]</label>
+                <input asp-for="EditedPosition.Name" id="name" maxlength="100" required />
+            </div>
+            <br />
+            <div class="labeled-input-container monetary-input-container @ViewBag.CurrentCurrency.ToLower()">
+                <label for="baseGrossSalary">@Localizer["BaseGrossSalaryLabel"]</label>
+                <input asp-for="EditedPosition.BaseGrossSalary" value="@Formatter.FormatDecimalForInput(Model.EditedPosition.BaseGrossSalary * ViewBag.ConversionRate)" type="number" id="baseGrossSalary" required />
+            </div>
+        </fieldset>
+        <fieldset>
+            <div class="labeled-input-container">
+                <label for="confirmPassword">@Localizer["UpdateConfirmPasswordLabel"]</label>
+                <input asp-for="Credentials.ConfirmationPassword" type="password" maxlength="100" id="confirmPassword" required />
+            </div>
+            <input type="submit" value="@Localizer["SaveBtn"]" />
+        </fieldset>
+        <!--Hidden fields-->
+        <input asp-for="EditedPosition.Id" type="hidden" readonly required />
+        <!--Hidden fields-->
+    </form>
+</section>
+
+<section>
+    <h2>@Localizer["DeleteSectionTitle"]</h2>
+    <form asp-action="Delete" asp-controller="Position" asp-route-id="@Model.EditedPosition.Id">
+        <div class="labeled-input-container m-0">
+            <label for="passwordConfirm">@Localizer["DeleteConfirmPasswordLabel"]</label>
+            <input asp-for="Credentials.ConfirmationPassword" type="password" id="passwordConfirm" required />
+        </div>
+        <input type="submit" value=@Localizer["DeleteBtn"] />
+    </form>
+</section>

@@ -1,0 +1,29 @@
+﻿namespace Plata.Enums
+{
+    public enum AppStatus
+    {
+        NoCredentialsFail,
+        WrongIdentifierFail,
+        WrongPasswordFail,
+        LogInSuccess,
+        LogOutSuccess,
+        NotAvailableUsernameFail,
+        NotAvailableEmailFail,
+        IncompleteAddressFail,
+        SignUpSuccess,
+        NoConfirmationPasswordFail,
+        EditAccountSuccess,
+        DeleteAccountSuccess,
+        EditCompanySuccess,
+        CreateEmployeeSuccess,
+        EditEmployeeSuccess,
+        DeleteEmployeeSuccess,
+        DeactivateEmployeeSuccess,
+        CreatePayslipSuccess,
+        DeletePayslipSuccess,
+        CreatePostionSuccess,
+        EditPostionSuccess,
+        DeletePositionFail,
+        DeletePostionSuccess,
+    }
+}

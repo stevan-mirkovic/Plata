@@ -1,0 +1,16 @@
+﻿@inject IViewLocalizer Localizer
+
+<header>
+    <nav>
+        <a asp-action="Index" asp-controller="Company">@Localizer["HomeLink"]</a>
+    </nav>
+    <nav>
+        <a asp-action="Employees" asp-controller="Company">@Localizer["EmployeesLink"]</a> |
+        <a asp-action="Positions" asp-controller="Company">@Localizer["PositionsLink"]</a>
+    </nav>
+    <nav>
+        <a asp-action="Edit" asp-controller="UserAccount">@Localizer["AccountLink"]</a> |
+        <a asp-action="LogOut" asp-controller="UserAccount">@Localizer["LogOutLink"]</a>
+    </nav>
+    <partial name="_PreferencesSelectors"></partial>
+</header>

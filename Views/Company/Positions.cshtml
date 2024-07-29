@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Positions";
+}
+
+@model CompanyPositionsViewModel
+@inject IViewLocalizer Localizer
+
+@section Header {
+     <partial name="_Header"></partial>
+}
+
+<div class="title-container">
+    <h1>@Localizer["MainTitle"]</h1>
+    <partial name="_AppStatusMsg"></partial>
+</div>
+
+<section>
+    <h2>@Localizer["TableSectionTitle"]</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>@Localizer["FirstTableHeader"]</th>
+                <th>@Localizer["SecondTableHeader"]</th>
+                <th>@Localizer["ThirdTableHeader"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Company.Positions.Count < 1)
+            {
+                <tr>
+                    <td colspan="3" class="info-msg p-2">@Localizer["TableNoDataMsg"]</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var position in Model.Company.Positions)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Edit" asp-controller="Position" asp-route-id="@position.Id">@position.Name</a>
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-controller="Position" asp-route-id="@position.Id">@Formatter.FormatMoneyForText(position.BaseGrossSalary * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</a>
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-controller="Position" asp-route-id="@position.Id">@position.GetActiveContracts().Count</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>@Localizer["CreateSectionTitle"]</h2>
+    <form asp-action="Create" asp-controller="Position">
+        <input asp-for="NewPosition.Name" placeholder=@Localizer["NameInput"] maxlength="100" required />
+        <br />
+        <br />
+        <div class="monetary-input-container @ViewBag.CurrentCurrency.ToLower()">
+            <input asp-for="NewPosition.BaseGrossSalary" placeholder=@Localizer["BaseGrossSalaryInput"] type="number" step="none" required />
+        </div>
+        <br />
+        <br />
+        <input type="submit" value=@Localizer["CreateSubmitBtn"]>
+        <!--Hidden fields-->
+        <input asp-for="NewPosition.CompanyId" value="@Model.Company.Id" type="hidden" required readonly />
+        <!--Hidden fields-->
+    </form>
+</section>

@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Payslips";
+    var activePayPolicy = Model.Employee.Company.GetActivePayPolicy();
+    var activeContract = Model.Employee.GetActiveContract();
+    var payslips = Model.Employee.GetAllPayslips();
+}
+
+@model EmployeePayslipsViewModel
+@inject IViewLocalizer Localizer
+
+@section Header {
+     <partial name="_Header"></partial>
+}
+
+<div class="title-container">
+    <h1>@Model.Employee.FullName.ToUpper() - @Localizer["Title"]</h1>
+    <partial name="_AppStatusMsg"></partial>
+    <a class="back-arrow-link" asp-action="Index" asp-controller="Employee" asp-route-id="@Model.Employee.Id">🢀</a>
+</div>
+
+<section>
+    <h2>@Localizer["SelectSectionTitle"]</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>@Localizer["FirstTableHeader"]</th>
+                <th>@Localizer["SecondTableHeader"]</th>
+                <th>@Localizer["ThirdTableHeader"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (payslips.Count < 1)
+            {
+                <tr>
+                    <td colspan="3" class="info-msg  p-2">@Localizer["NoTableDataMsg"]</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var payslip in payslips)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Index" asp-controller="Payslip" asp-route-id="@payslip.Id">@payslip.TimePeriod</a>
+                        </td>
+                        <td>
+                            <a asp-action="Index" asp-controller="Payslip" asp-route-id="@payslip.Id">@Formatter.FormatMoneyForText(payslip.GrossSalary * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</a>
+                        </td>
+                        <td>
+                            <a asp-action="Index" asp-controller="Payslip" asp-route-id="@payslip.Id">@Formatter.FormatMoneyForText(payslip.NetSalary * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>@Localizer["CreateSectionTitle"]</h2>
+    <form asp-action="Create" asp-controller="Payslip">
+        <fieldset>
+            <legend>@Localizer["TimePeriodFieldsetLegend"]</legend>
+            <input asp-for="NewPayslip.StartDate" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder=@Localizer["StartDateInput"] min="@Model.Employee.HireDate.ToString("yyyy-MM-dd")" required />
+            <input asp-for="NewPayslip.EndDate" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder=@Localizer["EndDateInput"] required />
+        </fieldset>
+        <fieldset class="mt-2">
+            <legend>@Localizer["BonusesFieldsetLegend"]</legend>
+            <div class="monetary-input-container @ViewBag.Currency">
+                <input asp-for="NewPayslip.TaxableBonuses" type="number" placeholder=@Localizer["TaxableBonusesInput"] />
+            </div>
+            <div class="monetary-input-container @ViewBag.Currency">
+                <input asp-for="NewPayslip.TaxFreeBonuses" type="number" placeholder=@Localizer["TaxFreeBonusesInput"] />
+            </div>
+        </fieldset>
+        <br />
+        <fieldset>
+            <input type="submit" value=@Localizer["CreateSubmitBtn"] @(activeContract == null ? "disabled" : "")>
+            @if (activeContract == null)
+            {
+                <p class="info-msg text-danger"><span>⚠︎</span>@Localizer["NoActiveContractMsg"]</p>
+            }
+        </fieldset>
+        <!--Hidden fields-->
+        <input asp-for=NewPayslip.PayPolicyId type="hidden" value="@activePayPolicy.Id" readonly />
+        <input asp-for="NewPayslip.ContractId" type="hidden" value="@(activeContract == null ? 0 : activeContract.Id)" readonly />
+        <!--Hidden fields-->
+    </form>
+</section>

@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "Employee";
+    var activeContract = Model.GetActiveContract();
+    var lastPaySlip = Model.GetLastPayslip();
+}
+
+@model Employee
+@inject IViewLocalizer Localizer
+
+@section Header {
+    <partial name="_Header"></partial>
+}
+
+<div class="title-container">
+    <h1>@Model.FullName.ToUpper()</h1>
+    <a asp-action="Edit" asp-controller="Employee" asp-route-id="@Model.Id">@Localizer["EditLink"]</a> |
+    <a asp-action="Payslips" asp-controller="Employee" asp-route-id="@Model.Id">@Localizer["PayslipsLink"]</a>
+    <partial name="_AppStatusMsg"></partial>
+    <a class="back-arrow-link" asp-action="Employees" asp-controller="Company">🢀</a>
+</div>
+
+<section>
+    <h2>@Localizer["ProfileSectionTitle"]</h2>
+    <div class="info-section">
+        <p><b>@Localizer["FirstNameField"]: </b>@Model.FirstName</p>
+        <p><b>@Localizer["LastNameField"]: </b>@Model.LastName</p>
+        <p><b>@Localizer["BirthdayField"]: </b>@Model.Birthday</p>
+        <p><b>@Localizer["HireDateField"]: </b>@Model.HireDate</p>
+        <p><b>@Localizer["PhoneNumberField"]: </b>@Model.PhoneNumber</p>
+        <p><b>@Localizer["EmailAddressField"]: </b>@Model.EmailAddress</p>
+        @if (Model.Address != null)
+        {
+            <p><b>@Localizer["AddressField"]: </b>@Model.Address?.ToString()</p>
+        }
+    </div>
+</section>
+
+<section>
+    <h2>@Localizer["ActiveContractSectionTitle"]</h2>
+    <div class="info-section">
+        @if (activeContract == null)
+        {
+            <p class="info-msg">@Localizer["NoActiveContractMsg"]</p>
+        }
+        else
+        {
+            <p><b>@Localizer["PositionField"]: </b>@activeContract.Position.Name</p>
+            <p><b>@Localizer["SalaryCoefficientField"]: </b>@Formatter.FormatDecimalForText(activeContract.SalaryCoefficient)</p>
+        }
+    </div>
+</section>
+
+<section>
+    <h2>@Localizer["LastPayslipSectionTitle"]</h2>
+    <div class="info-section">
+        @if (lastPaySlip == null)
+        {
+            <p class="info-msg">@Localizer["NoPayslipsMsg"]</p>
+        }
+        else
+        {
+            <p><b>@Localizer["TimePeriodField"]: </b>@lastPaySlip.StartDate - @lastPaySlip.EndDate</p>
+            <p><b>@Localizer["TaxableBonusesField"]: </b>@Formatter.FormatMoneyForText(lastPaySlip.TaxableBonuses * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</p>
+            <p><b>@Localizer["TaxFreeBonusesField"]: </b>@Formatter.FormatMoneyForText(lastPaySlip.TaxFreeBonuses * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</p>
+            <p><b>@Localizer["GrossSalaryField"]: </b>@Formatter.FormatMoneyForText(lastPaySlip.GrossSalary * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</p>
+            <p><b>@Localizer["CompanyCostField"]: </b>@Formatter.FormatMoneyForText(lastPaySlip.CompanyCost * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</p>
+            <p><b>@Localizer["NetSalaryField"]: </b>@Formatter.FormatMoneyForText(lastPaySlip.NetSalary * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</p>
+        }
+    </div>
+</section>

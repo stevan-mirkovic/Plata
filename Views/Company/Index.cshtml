@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "Company";
+    var activePayPolicy = Model.GetActivePayPolicy();
+    var employeeContributions = activePayPolicy.EmployeeContributions;
+    var companyContributions = activePayPolicy.CompanyContributions;
+}
+
+@model Company
+@inject IViewLocalizer Localizer
+
+@section Header {
+    <partial name="_Header"></partial>
+}
+
+<div class="title-container">
+    <h1>@Model.Name.ToUpper()</h1>
+    <a asp-action="Edit" asp-controller="Company">@Localizer["EditLink"]</a>
+    <partial name="_AppStatusMsg"></partial>
+</div>
+
+<section>
+    <h2>@Localizer["ProfileSectionTitle"]</h2>
+    <div class="info-section">
+        <p><b>@Localizer["NameField"]: </b>@Model.Name</p>
+        <p><b>@Localizer["FoundationDateField"]: </b>@Model.FoundationDate</p>
+        <p><b>@Localizer["SectorField"]: </b>@Model.Sector</p>
+        @if (Model.Description != null)
+        {
+            <p><b>@Localizer["DescriptionField"]: </b><i>@Model.Description</i></p>
+        }
+        <p><b>@Localizer["PhoneNumberField"]: </b>@Model.PhoneNumber</p>
+        <p><b>@Localizer["EmailAddressField"]: </b>@Model.EmailAddress</p>
+        @if (Model.Address != null)
+        {
+            <p><b>@Localizer["AddressField"]: </b> @Model.Address?.ToString()</p>
+        }
+    </div>
+</section>
+
+<section>
+    <h2>@Localizer["PayPolicySectionTitle"]</h2>
+    <div class="info-section">
+        <p>
+            <b>@Localizer["TaxFreeSalaryPortionField"]: </b>
+            @Formatter.FormatMoneyForText(activePayPolicy.TaxFreeSalaryPortion * ViewBag.ConversionRate, ViewBag.CurrencySymbol)
+        </p>
+        <p>
+            <b>@Localizer["TaxRateField"]: </b>
+            @Formatter.FormatRateForText(activePayPolicy.TaxRate)</p>
+        <p>
+            <b>@Localizer["EmployeeContributionRatesField"]: </b>
+            @Formatter.FormatRateForText(employeeContributions.PensionContributionRate) (@Localizer["PensionContributionField"]) -
+            @Formatter.FormatRateForText(employeeContributions.HealthInsuranceRate) (@Localizer["HealthInsuranceField"]) -
+            @Formatter.FormatRateForText(employeeContributions.UnemploymentInsuranceRate) (@Localizer["UnemploymentInsuranceField"])
+        </p>
+        <p>
+            <b>@Localizer["CompanyContributionRatesField"]: </b>
+            @Formatter.FormatRateForText(companyContributions.PensionContributionRate) (@Localizer["PensionContributionField"]) -
+            @Formatter.FormatRateForText(companyContributions.HealthInsuranceRate) (@Localizer["HealthInsuranceField"]) -
+            @Formatter.FormatRateForText(companyContributions.UnemploymentInsuranceRate) (@Localizer["UnemploymentInsuranceField"])
+        </p>
+    </div>
+</section>

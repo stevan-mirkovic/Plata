@@ -1,0 +1,15 @@
+﻿<div class="selectors-container">
+    <nav class="preferences-selector culture-selector">
+        <p>文A</p>
+        <a class=@(ViewBag.CurrentCulture == "sr-Latn-RS" ? "selected-preference" : "") asp-action="SetLanguage" asp-controller="Home" asp-route-culture="sr-Latn-RS" asp-route-redirectUrl="@ViewBag.CurrentUrl">RS</a>
+        <a class=@(ViewBag.CurrentCulture == "fr-FR" ? "selected-preference" : "") asp-action="SetLanguage" asp-controller="Home" asp-route-culture="fr-FR" asp-route-redirectUrl="@ViewBag.CurrentUrl">FR</a>
+        <a class=@(ViewBag.CurrentCulture == "en-US" ? "selected-preference" : "") asp-action="SetLanguage" asp-controller="Home" asp-route-culture="en-US" asp-route-redirectUrl="@ViewBag.CurrentUrl">EN</a>
+    </nav>
+    <nav class="preferences-selector currency-selector">
+        <p>¥$</p>
+        <a class=@(ViewBag.CurrentCurrency == "RSD" ? "selected-preference" : "") asp-action="SetCurrency" asp-controller="Home" asp-route-currency="RSD" asp-route-redirectUrl="@ViewBag.CurrentUrl">RSD</a>
+        <a class=@(ViewBag.CurrentCurrency == "EUR" ? "selected-preference" : "") asp-action="SetCurrency" asp-controller="Home" asp-route-currency="EUR" asp-route-redirectUrl="@ViewBag.CurrentUrl">EUR</a>
+        <a class=@(ViewBag.CurrentCurrency == "USD" ? "selected-preference" : "") asp-action="SetCurrency" asp-controller="Home" asp-route-currency="USD" asp-route-redirectUrl="@ViewBag.CurrentUrl">USD</a>
+    </nav>
+</div>
+

@@ -1,0 +1,124 @@
+﻿@{
+    ViewData["Title"] = "Edit Employee";
+    var isEmployeeActive = Model.EditedEmployee.GetActiveContract() != null;
+}
+
+@model EmployeeEditViewModel
+@inject IViewLocalizer Localizer
+
+@section Header {
+    <partial name="_Header"></partial>
+}
+
+<div class="title-container">
+    <h1>@Localizer["Title"]</h1>
+    <partial name="_AppStatusMsg"></partial>
+    <a class="back-arrow-link" asp-action="Index" asp-controller="Employee" asp-route-id="@Model.EditedEmployee.Id">🢀</a>
+</div>
+
+<section>
+    <h2>@Localizer["UpdateSectionTitle"]</h2>
+    <form asp-action="Edit" asp-controller="Employee">
+        <fieldset>
+            <legend class="m-0">@Localizer["MainInfoFieldsetLegend"]</legend>
+            <div class="labeled-input-container">
+                <label for="firstName">@Localizer["FirstNameLabel"]</label>
+                <input asp-for="EditedEmployee.FirstName" id="firstName" maxlength="50" required />
+            </div>
+            <div class="labeled-input-container">
+                <label for="lastName">@Localizer["LastNameLabel"]</label>
+                <input asp-for="EditedEmployee.LastName" id="lastName" maxlength="50" required />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="birthday">@Localizer["BirthdayLabel"]</label>
+                <input asp-for="EditedEmployee.Birthday" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="Birthday" id="birthday" max="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+            </div>
+            <div class="labeled-input-container">
+                <label for="hireDate">@Localizer["HireDateLabel"]</label>
+                <input asp-for="EditedEmployee.HireDate" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="Hire date" id="hireDate" min="@Model.EditedEmployee.Company.FoundationDate.ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="phone">@Localizer["PhoneNumberLabel"]</label>
+                <input asp-for="EditedEmployee.PhoneNumber" type="tel" id="phone" maxlength="15" required />
+            </div>
+            <div class="labeled-input-container">
+                <label for="email">@Localizer["EmailAddressLabel"]</label>
+                <input asp-for="EditedEmployee.EmailAddress" type="email" id="email" maxlength="100" required />
+            </div>
+        </fieldset>
+        <br />
+        <fieldset>
+            <legend class="m-0">@Localizer["AddressFieldsetLegend"]*</legend>
+            <div class="labeled-input-container">
+                <label for="street">@Localizer["AddressStreetLabel"]</label>
+                <input asp-for="EditedEmployee.Address.Street" id="street" maxlength="100" />
+            </div>
+            <div class="labeled-input-container">
+                <label for="number">@Localizer["AddressNumberLabel"]</label>
+                <input asp-for="EditedEmployee.Address.Number" id="number" maxlength="20" />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="city">@Localizer["AddressCityLabel"]</label>
+                <input asp-for="EditedEmployee.Address.City" id="city" maxlength="100" />
+            </div>
+            <div class="labeled-input-container">
+                <label for="postalCode">@Localizer["AddressPostalCodeLabel"]</label>
+                <input asp-for="EditedEmployee.Address.PostalCode" id="postalCode" maxlength="20" />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="country">@Localizer["AddressCountryLabel"]</label>
+                <input asp-for="EditedEmployee.Address.Country" id="country" maxlength="100" />
+            </div>
+        </fieldset>
+        <br />
+        <fieldset>
+            <legend class="m-0">@Localizer["ActiveContractFieldsetLegend"]*</legend>
+            <div class="labeled-input-container">
+                <label for="position">@Localizer["PositionLabel"]</label>
+                <select asp-for="EditedEmployeeContract.PositionId" asp-items="@(new SelectList(Model.EditedEmployee.Company.Positions, "Id", "Name"))" id="position">
+                    <option value="" selected>@Localizer["PositionOption"]</option>
+                </select>
+            </div>
+            <div class="labeled-input-container">
+                <label for="salaryCoefficient">@Localizer["SalaryCoefficientLabel"]</label>
+                <input asp-for="EditedEmployeeContract.SalaryCoefficient" value="@(Model.EditedEmployeeContract == null ? 1 : Formatter.FormatDecimalForInput(Model.EditedEmployeeContract.SalaryCoefficient))"
+                type="number" min="1" step="0.01" id="salaryCoefficient" />
+            </div>
+            <br />
+        </fieldset>
+        <br />
+        <fieldset>
+            <div class="labeled-input-container">
+                <label for="confirmPassword">@Localizer["UpdateConfirmPasswordLabel"]</label>
+                <input asp-for="Credentials.ConfirmationPassword" type="password" maxlength="100" id="confirmPassword" required />
+            </div>
+            <input type="submit" value=@Localizer["EditSubmitBtn"] />
+        </fieldset>
+        <p class="info-msg ">*@Localizer["NonRequiredMsg"]</p>
+        <!--Hidden fields-->
+        <input asp-for="EditedEmployee.Id" type="hidden" required readonly />
+        <!--Hidden fields-->
+    </form>
+</section>
+
+<section>
+    <h2>@Localizer["DeleteSectionTitle"]</h2>
+    <form asp-action="Delete" asp-controller="Employee" asp-route-id="@Model.EditedEmployee.Id">
+        <div class="labeled-input-container m-0">
+            <label for="passwordConfirm">@Localizer["DeleteConfirmPasswordLabel"]</label>
+            <input asp-for="Credentials.ConfirmationPassword" type="password" maxlength="100" id="passwordConfirm" />
+        </div>
+        <br />
+        <br />
+        <input type="submit" name="action" value=@Localizer["DeleteSubmitBtn"] />
+        <button type="submit" name="action" value="Deactivate" @(!isEmployeeActive ? "disabled" : "")>@Localizer["DeactivateSubmitBtn"]</button>
+        @if (!isEmployeeActive)
+        {
+            <p class="info-msg text-danger"><span>⚠︎</span>@Localizer["AlreadyDeactivatedMsg"]</p>
+        }
+    </form>
+</section>

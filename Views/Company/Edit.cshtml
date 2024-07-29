@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "Edit Company";
+    var employeeContributions = Model.EditedCompanyPayPolicy.EmployeeContributions;
+    var companyContributions = Model.EditedCompanyPayPolicy.CompanyContributions;
+}
+
+@model CompanyEditViewModel
+@inject IViewLocalizer Localizer
+
+@section Header {
+     <partial name="_Header"></partial>
+}
+
+<div class="title-container">
+    <h1>@Localizer["MainTitle"]</h1>
+    <partial name="_AppStatusMsg"></partial>
+    <a class="back-arrow-link" asp-action="Index" asp-controller="Company">🢀</a>
+</div>
+
+<section>
+    <h2>@Localizer["UpdateSectionTitle"]</h2>
+    <form asp-action="Edit" asp-controller="Company">
+        <fieldset>
+            <legend class="m-0">@Localizer["MainInfoFieldsetLegend"]</legend>
+            <div class="labeled-input-container">
+                <label for="name">@Localizer["NameLabel"]</label>
+                <input asp-for="EditedCompany.Name" id="name" max-length="100" required />
+            </div>
+            <div class="labeled-input-container">
+                <label for="foundationDate">@Localizer["FoundationDateLabel"]</label>
+                <input asp-for="EditedCompany.FoundationDate" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="Foundation date" id="foundationDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="sector">@Localizer["SectorLabel"]</label>
+                <input asp-for="EditedCompany.Sector" id="sector" max-length="100" required />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="description">@Localizer["DescriptionLabel"]*</label>
+                <textarea asp-for="EditedCompany.Description" id="description" max-length="600"></textarea>
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="phone">@Localizer["PhoneNumberLabel"]</label>
+                <input asp-for="EditedCompany.PhoneNumber" id="phone" max-length="15" required />
+            </div>
+            <div class="labeled-input-container">
+                <label for="email">@Localizer["EmailAddressLabel"]</label>
+                <input asp-for="EditedCompany.EmailAddress" id="email" max-length="100" required />
+            </div>
+        </fieldset>
+        <br />
+        <fieldset>
+            <legend class="m-0">@Localizer["AddressFieldsetLegend"]*</legend>
+            <div class="labeled-input-container">
+                <label for="street">@Localizer["AddressStreetLabel"]</label>
+                <input asp-for="EditedCompany.Address.Street" id="street" max-length="100" />
+            </div>
+            <div class="labeled-input-container">
+                <label for="number">@Localizer["AddressNumberLabel"]</label>
+                <input asp-for="EditedCompany.Address.Number" id="number" max-length="20" />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="city">@Localizer["AddressCityLabel"]</label>
+                <input asp-for="EditedCompany.Address.City" id="city" max-length="100" />
+            </div>
+            <div class="labeled-input-container">
+                <label for="postalCode">@Localizer["AddressPostalCodeLabel"]</label>
+                <input asp-for="EditedCompany.Address.PostalCode" id="postalCode" max-length="100" />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="country">@Localizer["AddressCountryLabel"]</label>
+                <input asp-for="EditedCompany.Address.Country" id="country" max-length="20" />
+            </div>
+        </fieldset>
+        <br />
+        <fieldset>
+            <legend class="m-0">@Localizer["PayPolicyFieldsetLegend"]</legend>
+            <div class="labeled-input-container monetary-input-container @ViewBag.CurrentCurrency.ToLower()">
+                <label for="taxFree">@Localizer["TaxFreeSalaryPortionLabel"]</label>
+                <input asp-for="EditedCompanyPayPolicy.TaxFreeSalaryPortion" value="@Formatter.FormatDecimalForInput(Model.EditedCompanyPayPolicy.TaxFreeSalaryPortion * ViewBag.ConversionRate)" type="number" id="taxFree" required />
+            </div>
+            <div class="labeled-input-container">
+                <label for="taxRate">@Localizer["TaxRateLabel"]</label>
+                <input asp-for="EditedCompanyPayPolicy.TaxRate" value="@Formatter.FormatDecimalForInput(Model.EditedCompanyPayPolicy.TaxRate)" type="number" min="0" max="1" step="0.01" id="taxRate" required />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="employeePension">@Localizer["EmployeePensionContributionRateLabel"]</label>
+                <input asp-for="EditedCompanyPayPolicy.EmployeeContributions.PensionContributionRate" value="@Formatter.FormatDecimalForInput(employeeContributions.PensionContributionRate)" type="number" min="0" max="1" step="0.01" id="employeePension" required />
+            </div>
+            <div class="labeled-input-container">
+                <label for="employeeHealth">@Localizer["EmployeeHealtInsuranceRateLabel"]</label>
+                <input asp-for="EditedCompanyPayPolicy.EmployeeContributions.HealthInsuranceRate" value="@Formatter.FormatDecimalForInput(employeeContributions.HealthInsuranceRate)" type="number" min="0" max="1" step="0.01" id="employeeHealth" required />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="employeeUnemployment">@Localizer["EmployeeUnemploymentInsuranceRateLabel"]</label>
+                <input asp-for="EditedCompanyPayPolicy.EmployeeContributions.UnemploymentInsuranceRate" value="@Formatter.FormatDecimalForInput(employeeContributions.UnemploymentInsuranceRate)" type="number" min="0" max="1" step="0.01" id="employeeUnemployment" required />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="companyPension">@Localizer["CompanyPensionContributionRateLabel"]</label>
+                <input asp-for="EditedCompanyPayPolicy.CompanyContributions.PensionContributionRate" value="@Formatter.FormatDecimalForInput(companyContributions.PensionContributionRate)" type="number" min="0" max="1" step="0.01" id="companyPension" required />
+            </div>
+            <div class="labeled-input-container">
+                <label for="companyHealth">@Localizer["CompanyHealthInsuranceRateLabel"]</label>
+                <input asp-for="EditedCompanyPayPolicy.CompanyContributions.HealthInsuranceRate" value="@Formatter.FormatDecimalForInput(companyContributions.HealthInsuranceRate)" type="number" min="0" max="1" step="0.01" id="companyHealth" required />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="companyUnemployment">@Localizer["CompanyUnemploymentInsuranceRateLabel"]</label>
+                <input asp-for="EditedCompanyPayPolicy.CompanyContributions.UnemploymentInsuranceRate" value="@Formatter.FormatDecimalForInput(companyContributions.UnemploymentInsuranceRate)" type="number" min="0" max="1" step="0.01" id="companyUnemployment" required />
+            </div>
+        </fieldset>
+        <br />
+        <fieldset>
+            <div class="labeled-input-container">
+                <label for="confirmPassword">@Localizer["ConfirmPasswordLabel"]</label>
+                <input asp-for="Credentials.ConfirmationPassword" type="password" id="confirmPassword" maxlength="100" required /> 
+                <br />
+            </div>
+            <input type="submit" value="@Localizer["EditSubmitBtn"]" />
+        </fieldset>
+        <p class="info-msg ">*@Localizer["NonRequiredMsg"]</p>
+    </form>
+</section>

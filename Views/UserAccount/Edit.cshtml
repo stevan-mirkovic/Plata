@@ -1,0 +1,54 @@
+﻿@{ 
+    ViewData["Title"] = "Edit Account"; 
+}
+
+@model UserAccountEditViewModel
+@inject IViewLocalizer Localizer
+
+@section Header { 
+    <partial name="_Header"></partial> 
+}
+
+<div class="title-container">
+    <h1>@Localizer["MainTitle"]</h1>
+    <partial name="_AppStatusMsg"></partial>
+</div>
+
+<section>
+    <h2>@Localizer["UpdateSectionTitle"]</h2>
+    <form asp-action="Edit" asp-controller="UserAccount">
+        <fieldset>
+            <div class="labeled-input-container m-0">
+                <label for="username">@Localizer["UsernameLabel"]</label>
+                <input asp-for="EditedUserAccount.Username" id="username" maxlength="100" required />
+            </div>
+            <br />
+            <div class="labeled-input-container">
+                <label for="newPassword">@Localizer["NewPasswordLabel"]*</label>
+                <input asp-for="Credentials.NewPassword" type="password" id="newPassword" maxlength="100" />
+            </div>
+        </fieldset>
+        <fieldset>
+            <div class="labeled-input-container">
+                <label for="confirmPassword">@Localizer["UpdateConfirmPasswordLabel"]</label>
+                <input asp-for="Credentials.ConfirmationPassword" type="password" id="confirmPassword" maxlength="100" required />
+            </div>
+            <input type="submit" value=@Localizer["SaveBtn"] />
+        </fieldset>
+        <p class="info-msg">*@Localizer["InfoMsg"]</p>
+        <!--Hidden fields-->
+        <input asp-for="EditedUserAccount.Password" type="hidden" required readonly" />
+        <!--Hidden fields-->
+    </form>
+</section>
+
+<section>
+    <h2>@Localizer["DeleteSectionTitle"]</h2>
+    <form asp-action="Delete" asp-controller="UserAccount">
+        <div class="labeled-input-container m-0">
+            <label for="passwordConfirm">@Localizer["DeleteConfirmPasswordLabel"]</label>
+            <input asp-for="Credentials.ConfirmationPassword" type="password" id="passwordConfirm" maxlength="100" required />
+        </div>
+        <input type="submit" value=@Localizer["DeleteBtn"] />
+    </form>
+</section>

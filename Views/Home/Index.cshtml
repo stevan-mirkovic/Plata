@@ -1,0 +1,68 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+@model HomeIndexViewModel
+@inject IViewLocalizer Localizer
+
+<partial name="_PreferencesSelectors"></partial>
+
+<div class="title-container">
+    <h1>@Localizer["MainTitle"]</h1>
+    <h2>@Localizer["Subtitle"]</h2>
+    <partial name="_AppStatusMsg"></partial>
+</div>
+
+<section>
+    <h2>@Localizer["LogInSectionTitle"]</h2>
+    <form asp-action="LogIn" asp-controller="UserAccount">
+        <input asp-for="Credentials.Identifier" placeholder=@Localizer["IdentifierInput"] maxlength="100" required />
+        <input asp-for="Credentials.Password" type="password" placeholder=@Localizer["LogInPasswordInput"] maxlength="100" required />
+        <input type="submit" value="@Localizer["LogInSubmitBtn"]" />
+    </form>
+</section>
+
+<section>
+    <h2>@Localizer["SignUpSectionTitle"]</h2>
+    <form asp-action="Create" asp-controller="UserAccount">
+        <fieldset>
+            <legend>@Localizer["AccountFieldsetLegend"]</legend>
+            <input asp-for="NewUserAccount.Username" placeholder=@Localizer["UsernameInput"] maxlength="100" required />
+            <input asp-for="NewUserAccount.Password" type="password" placeholder=@Localizer["SignUpPasswordInput"] maxlength="100" required />
+        </fieldset>
+        <br />
+        <fieldset>
+            <legend>@Localizer["CompanyFieldsetLegend"]</legend>
+            <input asp-for="NewUserAccount.Company.Name" placeholder=@Localizer["NameInput"] maxlength="100" required />
+            <input asp-for="NewUserAccount.Company.FoundationDate" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder=@Localizer["FoundationDateInput"] max ="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+            <br />
+            <br />
+            <input asp-for="NewUserAccount.Company.Sector" placeholder=@Localizer["SectorInput"] maxlength="100" required />
+            <br />
+            <br />
+            <textarea asp-for="NewUserAccount.Company.Description" maxlength="600" placeholder=@Localizer["DescriptionInput"]></textarea>
+            <br />
+            <br />
+            <input asp-for="NewUserAccount.Company.PhoneNumber" type="tel" placeholder=@Localizer["PhoneNumberInput"] maxlength="20" required />
+            <input asp-for="NewUserAccount.Company.EmailAddress" type="email" placeholder=@Localizer["EmailAddressInput"] maxlength="100" required />
+        </fieldset>
+        <br />
+        <fieldset>
+            <legend>@Localizer["AddressFieldsetLegend"]</legend>
+            <input asp-for="NewUserAccount.Company.Address.Street" maxlength="100" placeholder=@Localizer["AddressStreetInput"] />
+            <input asp-for="NewUserAccount.Company.Address.Number" maxlength="20" placeholder=@Localizer["AddressNumberInput"] />
+            <br />
+            <br />
+            <input asp-for="NewUserAccount.Company.Address.City" maxlength="100" placeholder=@Localizer["AddressCityInput"] />
+            <input asp-for="NewUserAccount.Company.Address.PostalCode" maxlength="20" placeholder=@Localizer["AddressPostalCodeInput"] />
+            <br />
+            <br />
+            <input asp-for="NewUserAccount.Company.Address.Country" maxlength="100" placeholder=@Localizer["AddressCountryInput"] />
+        </fieldset>
+        <br />
+        <fieldset>
+            <input type="submit" value="@Localizer["SignUpSubmitBtn"]" />
+        </fieldset>
+        <p class="info-msg">@Localizer["NonRequiredMsg"]</p>
+    </form>
+</section>

@@ -1,0 +1,114 @@
+﻿@{
+    ViewData["Title"] = "Employees";
+    var anyCompanyPosition = Model.Company.Positions.Count > 0;
+}
+
+@model CompanyEmployeesViewModel
+@inject IViewLocalizer Localizer
+
+@section Header {
+     <partial name="_Header"></partial>
+}
+
+<div class="title-container">
+    <h1>@Localizer["MainTitle"]</h1>
+    <partial name="_AppStatusMsg"></partial>
+</div>
+
+<section>
+    <h2>@Localizer["SelectSectionTitle"]</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>@Localizer["FirstTableHeader"]</th>
+                <th>@Localizer["SecondTableHeader"]</th>
+                <th>@Localizer["ThirdTableHeader"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Company.Employees.Count < 1)
+            {
+                <tr>
+                    <td colspan="3" class="info-msg text-muted p-2">@Localizer["NoTableDataMsg"]</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var employee in Model.Company.Employees)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Index" asp-controller="Employee" asp-route-id="@employee.Id">@employee.FullName</a>
+                        </td>
+                        <td>
+                            <a asp-action="Index" asp-controller="Employee" asp-route-id="@employee.Id">
+                                @(employee.GetActiveContract()?.Position?.Name ?? "-")
+                            </a>
+                        </td>
+                        <td>
+                            <a asp-action="Index" asp-controller="Employee" asp-route-id="@employee.Id">
+                                @(employee.HasActiveContract() ? Localizer["ActiveStatus"] : Localizer["DeactivatedStatus"])
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <div class="export-links-container">
+        <a class="export-btn xlsx" asp-action="DownloadEmployeesXlsx" asp-controller="Company"><i class="fa-regular fa-file-excel"></i> .xlsx</a>
+        <a class="export-btn" asp-action="DownloadEmployeesCsv" asp-controller="Company"><i class="fa-solid fa-file-csv"></i> .csv</a>
+    </div>
+</section>
+
+<section>
+    <h2>@Localizer["CreateSectionTitle"]</h2>
+    <form asp-action="Create" asp-controller="Employee" class="creation-form">
+        <fieldset>
+            <legend>@Localizer["MainInfoFieldsetLegend"]</legend>
+            <input asp-for="NewEmployee.FirstName" placeholder=@Localizer["FirstNameInput"] maxlength="50" required />
+            <input asp-for="NewEmployee.LastName" placeholder=@Localizer["LastNameInput"] maxlength="50" required />
+            <br />
+            <br />
+            <input asp-for="NewEmployee.Birthday" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder=@Localizer["BirthdayInput"] max="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+            <input asp-for="NewEmployee.HireDate" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder=@Localizer["HireDateInput"] min="@Model.Company.FoundationDate.ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+            <br />
+            <br />
+            <input asp-for="NewEmployee.PhoneNumber" type="tel" placeholder=@Localizer["PhoneNumberInput"] maxlength="15" required />
+            <input asp-for="NewEmployee.EmailAddress" type="email" placeholder=@Localizer["EmailAddressInput"] maxlength="100" required />
+        </fieldset>
+        <br />
+        <fieldset>
+            <legend>Address*</legend>
+            <input asp-for="NewEmployee.Address.Street" placeholder=@Localizer["AddressStreetInput"] maxlength="100" />
+            <input asp-for="NewEmployee.Address.Number" placeholder=@Localizer["AddressNumberInput"] maxlength="20" />
+            <br />
+            <br />
+            <input asp-for="NewEmployee.Address.City" placeholder=@Localizer["AddressCityInput"] maxlength="100" />
+            <input asp-for="NewEmployee.Address.PostalCode" placeholder=@Localizer["AddressPostalCodeInput"] maxlength="20" />
+            <br />
+            <br />
+            <input asp-for="NewEmployee.Address.Country" placeholder=@Localizer["AddressCountryInput"] maxlength="100" />
+        </fieldset>
+        <br />
+        <fieldset>
+            <legend>@Localizer["ContractFieldsetLegend"]</legend>
+            <input asp-for="NewEmployeeContract.SalaryCoefficient" type="number" placeholder=@Localizer["SalaryCoefficientInput"] min="1" step="0.01" required />
+            <select asp-for="NewEmployeeContract.PositionId" asp-items="@(new SelectList(Model.Company.Positions, "Id", "Name"))" required>
+                <option value="" selected disabled>@Localizer["PositionInput"]</option>
+            </select>
+        </fieldset>
+        <br />
+        <fieldset>
+            <input type="submit" value=@Localizer["CreateSubmitBtn"] @(anyCompanyPosition ? "" : "disabled")>
+            @if (!anyCompanyPosition)
+            {
+                <p class="info-msg text-danger"><span>⚠</span>@Localizer["NoPostionAlertMsg"]</p>
+            }
+        </fieldset>
+        <p class="info-msg text-muted">*@Localizer["NonRequiredMsg"]</p>
+        <!--Hidden fields-->
+        <input asp-for="NewEmployee.CompanyId" type="hidden" value="@Model.Company.Id" readonly />
+        <!--Hidden fields-->
+    </form>
+</section>

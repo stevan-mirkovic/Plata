@@ -1,0 +1,9 @@
+﻿﻿@{
+    var appStatus = (AppStatus?)ViewBag.AppStatus;
+    var appStatusName = appStatus.ToString();
+    var appStatusType = appStatus.ToString().Contains("Success") ? "success" : appStatus.ToString().Contains("Fail") ? "fail" : "";
+}
+
+@inject IViewLocalizer Localizer
+
+<div class="app-status-msg @appStatusType">@Localizer[$"{appStatusName}"]</div>

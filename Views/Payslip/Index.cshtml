@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "Payslip";
+    var employeeContributions = Model.PayPolicy.EmployeeContributions;
+    var companyContributions = Model.PayPolicy.CompanyContributions;
+}
+
+@model Payslip
+@inject IViewLocalizer Localizer
+
+@section Header {
+    <partial name="_Header"></partial>
+}
+
+<div class="title-container">
+    <h1>@Model.EmploymentContract.Employee.FullName.ToUpper() - @Localizer["Title"]</h1>
+    <a asp-action="Delete" asp-controller="Payslip" asp-route-id="@Model.Id">@Localizer["DeleteLink"]</a>
+    <partial name="_AppStatusMsg"></partial>
+    <a class="back-arrow-link" asp-action="Payslips" asp-controller="Employee" asp-route-id="@Model.EmploymentContract.EmployeeId">🢀</a>
+</div>
+
+<section>
+    <h2>@Localizer["MainInfoSectionTitle"]</h2>
+    <div class="info-section">
+        <p><b>@Localizer["TimePeriodField"]: </b>@Model.TimePeriod</p>
+        <p><b>@Localizer["TaxableBonusesField"]: </b>@Formatter.FormatMoneyForText(Model.TaxableBonuses * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</p>
+        <p><b>@Localizer["TaxFreeBonusesField"]: </b>@Formatter.FormatMoneyForText(Model.TaxFreeBonuses * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</p>
+        <p><b>@Localizer["GrossSalaryField"]: </b>@Formatter.FormatMoneyForText(Model.GrossSalary * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</p>
+        <p><b>@Localizer["CompanyCostField"]: </b>@Formatter.FormatMoneyForText(Model.CompanyCost * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</p>
+        <p><b>@Localizer["NetSalaryField"]: </b>@Formatter.FormatMoneyForText(Model.NetSalary * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</p>
+    </div>
+</section>
+
+<section>
+    <h2>@Localizer["AssociatedContractSectionTitle"]</h2>
+    <div class="info-section">
+        <p><b>@Localizer["PostionField"]: </b>@Model.EmploymentContract.Position.Name</p>
+        <p><b>@Localizer["SalaryCoefficientField"]: </b>@Formatter.FormatDecimalForText(Model.EmploymentContract.SalaryCoefficient)</p>
+        <p><b>@Localizer["ContractStatusField"]: </b>@(Model.EmploymentContract.IsActive ? Localizer["ContractActiveStatus"] : Localizer["ContractDeactivatedStatus"])</p>
+    </div>
+    
+</section>
+
+<section>
+    <h2>@Localizer["AssociatedPayPolicySectionTitle"]</h2>
+    <div class="info-section">
+        <p><b>@Localizer["TaxFreeSalaryPortionField"]: </b>@Formatter.FormatMoneyForText(Model.PayPolicy.TaxFreeSalaryPortion * ViewBag.ConversionRate, ViewBag.CurrencySymbol)</p>
+        <p><b>@Localizer["TaxRateField"]: </b>@Formatter.FormatRateForText(Model.PayPolicy.TaxRate)</p>
+        <p>
+            <b>@Localizer["EmployeeContributionRatesField"]: </b>
+            @Formatter.FormatRateForText(employeeContributions.PensionContributionRate) (@Localizer["PensionContribution"]) -
+            @Formatter.FormatRateForText(employeeContributions.HealthInsuranceRate) (@Localizer["HealthInsurance"]) -
+            @Formatter.FormatRateForText(employeeContributions.UnemploymentInsuranceRate) (@Localizer["UnemploymentInsurance"])
+        </p>
+        <p>
+            <b>@Localizer["CompanyContributionRatesField"]: </b>
+            @Formatter.FormatRateForText(companyContributions.PensionContributionRate) (@Localizer["PensionContribution"]) -
+            @Formatter.FormatRateForText(companyContributions.HealthInsuranceRate) (@Localizer["HealthInsurance"]) -
+            @Formatter.FormatRateForText(companyContributions.UnemploymentInsuranceRate) (@Localizer["UnemploymentInsurance"])
+        </p>
+        <p><b>@Localizer["PayPolicyStatusField"]: </b>@(Model.PayPolicy.IsActive ? Localizer["PayPolicyActiveStatus"] : Localizer["PayPolicyDeactivatedStatus"])</p>
+    </div>
+</section>
+
+<div>
+    <a class="export-btn pdf" asp-action="DownloadPdf" asp-controller="Payslip" asp-route-id="@Model.Id"><i class="fa-regular fa-file-pdf"></i> PDF</a>
+</div>
